@@ -17,6 +17,16 @@
 #include <rwsua2017_msgs/MakeAPlay.h>
 #include <tf/transform_broadcaster.h>
 
+
+double randNumber(){
+		struct timeval t1;
+		gettimeofday(&t1,NULL);
+		srand(t1.tv_usec);
+		double x =((((double)rand()/(double)RAND_MAX)*2 -1)*5);
+
+		return x;
+}
+
 using namespace std;
 using namespace boost;
 using namespace tf;
@@ -35,9 +45,9 @@ namespace rwsua2017
 	    MyPlayer(string argin_name, string argin_teamname): Player(argin_name,argin_teamname)
 	    {
 
-		t1.setOrigin(tf::Vector3(1,1,0));
+		t1.setOrigin(tf::Vector3(randNumber(),randNumber(),0));
 		Quaternion q;
-		q.setRPY(0,0,0);
+		q.setRPY(0,0,randNumber());
 		t1.setRotation(q);
 		br.sendTransform(StampedTransform(t1, Time::now(),"map",name));
 
@@ -52,7 +62,7 @@ namespace rwsua2017
 		cout << "I received a MakeAPlay message" << endl;
 		cout << "max_displacement = " << msg->max_displacement << endl;
 
-		// Definição dos angulos de rotaçõ e valores de translação
+		// Definição dos angulos de rotação e valores de translação
 		static int i=0;
 		float turn_angle=M_PI/10;
 		float displacement=msg->max_displacement;
@@ -61,7 +71,7 @@ namespace rwsua2017
 		Transform t_mov;
 
 		Quaternion q;
-		q.setRPY(0, 0, turn_angle);
+		q.setRPY(0, 0, randNumber());
 		t_mov.setRotation(q);
 		t_mov.setOrigin( Vector3(displacement,0.0, 0.0) );
 		Transform t = t1 * t_mov;
