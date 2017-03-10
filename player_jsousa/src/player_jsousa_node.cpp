@@ -42,7 +42,7 @@ namespace rwsua2017
 		br.sendTransform(StampedTransform(t1, Time::now(),"map",name));
 
 
-		sub = n.subscribe("/make_a_play", 1000, &MyPlayer::makeAPlayCallback, this);
+		sub = n.subscribe("/make_a_play/dog", 1000, &MyPlayer::makeAPlayCallback, this);
 
 	    	cout<<"Initialised MyPlayer"<<endl;
 	    }
@@ -55,7 +55,7 @@ namespace rwsua2017
 		// Definição dos angulos de rotaçõ e valores de translação
 		static int i=0;
 		float turn_angle=M_PI/10;
-		float displacement=0.5+(float)i/100;
+		float displacement=msg->max_displacement;
 
 
 		Transform t_mov;
