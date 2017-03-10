@@ -16,7 +16,9 @@
 #include <rwsua2017_libs/player.h>
 #include <rwsua2017_msgs/MakeAPlay.h>
 #include <tf/transform_broadcaster.h>
+#include <tf/transform_listener.h>
 
+#define MAX_ANGLE M_PI/30
 
 double randNumber(){
 		struct timeval t1;
@@ -40,6 +42,7 @@ namespace rwsua2017
 	    public:
 		ros::Subscriber sub;
         	TransformBroadcaster br;
+		TransformListener listener;
 		Transform t1;
 
 	    MyPlayer(string argin_name, string argin_teamname): Player(argin_name,argin_teamname)
@@ -57,27 +60,44 @@ namespace rwsua2017
 	    	cout<<"Initialised MyPlayer"<<endl;
 	    }
 
+	   float getAngleTo(string player_name)
+	   {
+		       tf::StampedTransform trans;
+		try{
+			listener.lookupTransform(name, player_name,ros::Time(0), trans);
+		}
+		catch (tf::TransformException &ex) {
+		ROS_ERROR("%s",ex.what());
+		ros::Duration(1.0).sleep();
+		}
+		float x = trans.getOrigin().x();
+		float y = trans.getOrigin().y();
+		double angle = atan2(y,x);
+	   }
+
 	   void makeAPlayCallback(const rwsua2017_msgs::MakeAPlay::ConstPtr& msg)
 	   {
 		cout << "I received a MakeAPlay message" << endl;
 		cout << "max_displacement = " << msg->max_displacement << endl;
 
 		// Definição dos angulos de rotação e valores de translação
-		static int i=0;
-		float turn_angle=M_PI/10;
+
+		float turn_angle=getAngleTo("dcorreia");
+		if (turn_angle> MAX_ANGLE){turn_angle=MAX_ANGLE;}
+		if (turn_angle< -MAX_ANGLE){turn_angle=-MAX_ANGLE;}
 		float displacement=msg->max_displacement;
 
 
 		Transform t_mov;
 
 		Quaternion q;
-		q.setRPY(0, 0, randNumber());
+		q.setRPY(0, 0, turn_angle);
 		t_mov.setRotation(q);
 		t_mov.setOrigin( Vector3(displacement,0.0, 0.0) );
 		Transform t = t1 * t_mov;
 		br.sendTransform(StampedTransform(t, Time::now(), "map", name));
 		t1=t;
-i++;
+		
 	   }
 
 	    vector<string> teammates; // std::vector<boost::shared_ptr<Player>> teammates;
