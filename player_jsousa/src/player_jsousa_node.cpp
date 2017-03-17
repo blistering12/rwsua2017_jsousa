@@ -43,11 +43,11 @@ namespace rwsua2017
 		ros::Subscriber sub;
         	TransformBroadcaster br;
 		TransformListener listener;
-		Transform t1;
+
 
 	    MyPlayer(string argin_name, string argin_teamname): Player(argin_name,argin_teamname)
 	    {
-
+		Transform t1;
 		t1.setOrigin(tf::Vector3(randNumber(),randNumber(),0));
 		Quaternion q;
 		q.setRPY(0,0,randNumber());
@@ -75,6 +75,19 @@ namespace rwsua2017
 		double angle = atan2(y,x);
 	   }
 
+	tf::StampedTransform getPose(void)
+	{
+		tf::StampedTransform trans;
+		try{
+			listener.lookupTransform("map",name,ros::Time(0), trans);
+		}
+		catch (tf::TransformException &ex) {
+			ROS_ERROR("%s",ex.what());
+			ros::Duration(1.0).sleep();
+		}
+		return trans;
+	}
+
 	   void makeAPlayCallback(const rwsua2017_msgs::MakeAPlay::ConstPtr& msg)
 	   {
 		cout << "I received a MakeAPlay message" << endl;
@@ -94,7 +107,7 @@ namespace rwsua2017
 		q.setRPY(0, 0, turn_angle);
 		t_mov.setRotation(q);
 		t_mov.setOrigin( Vector3(displacement,0.0, 0.0) );
-		Transform t = t1 * t_mov;
+		Transform t = getPose() * t_mov;
 		br.sendTransform(StampedTransform(t, Time::now(), "map", name));
 		t1=t;
 		
