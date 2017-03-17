@@ -55,7 +55,7 @@ namespace rwsua2017
 		br.sendTransform(StampedTransform(t1, Time::now(),"map",name));
 
 
-		sub = n.subscribe("/make_a_play/dog", 1000, &MyPlayer::makeAPlayCallback, this);
+		sub = n.subscribe("/make_a_play/cheetah", 1000, &MyPlayer::makeAPlayCallback, this);
 
 	    	cout<<"Initialised MyPlayer"<<endl;
 	    }
