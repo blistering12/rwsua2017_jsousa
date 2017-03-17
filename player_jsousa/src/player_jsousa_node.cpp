@@ -17,6 +17,7 @@
 #include <rwsua2017_msgs/MakeAPlay.h>
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
+#include <visualization_msgs/Marker.h>
 
 #define MAX_ANGLE M_PI/30
 
@@ -43,6 +44,7 @@ namespace rwsua2017
 		ros::Subscriber sub;
         	TransformBroadcaster br;
 		TransformListener listener;
+		Publisher vis_pub;
 
 
 	    MyPlayer(string argin_name, string argin_teamname): Player(argin_name,argin_teamname)
@@ -56,6 +58,7 @@ namespace rwsua2017
 
 
 		sub = n.subscribe("/make_a_play/cheetah", 1000, &MyPlayer::makeAPlayCallback, this);
+		vis_pub = n.advertise<visualization_msgs::Marker>( "/bocas", 0 );
 
 	    	cout<<"Initialised MyPlayer"<<endl;
 	    }
@@ -124,6 +127,28 @@ namespace rwsua2017
 			}
 
 			move(displacement, angleC, MAX_ANGLE);
+
+        //enviar boca
+        visualization_msgs::Marker marker;
+        marker.header.frame_id = name;
+        marker.header.stamp = ros::Time();
+        marker.ns = name;
+        marker.id = 0;
+        marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
+        marker.action = visualization_msgs::Marker::ADD;
+        marker.pose.position.x = 0; marker.pose.position.y = 0.6; marker.pose.position.z = 0;
+        marker.pose.orientation.x = 0.0; marker.pose.orientation.y = 0.0; marker.pose.orientation.z = 0.0;
+        marker.pose.orientation.w = 1.0;
+        marker.scale.z = 0.4;
+        marker.color.a = 1.0; // Don't forget to set the alpha!
+        marker.color.r = 0.3;
+        marker.color.g = 0.3;
+        marker.color.b = 0.3;
+        marker.frame_locked = 1;
+        marker.lifetime = ros::Duration(1);
+        marker.text = "ez pz lemon squeezy";
+        vis_pub.publish(marker);
+
 	   }
 
 
