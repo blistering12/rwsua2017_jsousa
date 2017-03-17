@@ -118,7 +118,7 @@ float getAngleFromTo(string namee, string player_name)
 					}
 			}
 
-			int safedist = 1.4;
+			int safedist = 2;
 			double angleC;
 			if(mindistH < safedist){
 					if(msg->green_alive.size() > 0){
