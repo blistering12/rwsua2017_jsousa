@@ -95,7 +95,7 @@ namespace rwsua2017
 
 		// Definição dos angulos de rotação e valores de translação
 
-		float turn_angle=getAngleTo("dcorreia");
+		float turn_angle=getAngleTo("rmartins");
 		if (turn_angle> MAX_ANGLE){turn_angle=MAX_ANGLE;}
 		if (turn_angle< -MAX_ANGLE){turn_angle=-MAX_ANGLE;}
 		float displacement=msg->max_displacement;
