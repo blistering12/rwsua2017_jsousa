@@ -209,7 +209,7 @@ double getDistFromTo(string from, string to){
 		Quaternion q;
 		q.setRPY(0, 0, turn_angle);
 		t_mov.setRotation(q);
-		t_mov.setOrigin( Vector3(displacement,0.0, 0.0) );
+		t_mov.setOrigin( Vector3(displacement*1.1,0.0, 0.0) );
 		Transform t = getPose() * t_mov;
 		br.sendTransform(StampedTransform(t, Time::now(), "map", name));	
 	}
