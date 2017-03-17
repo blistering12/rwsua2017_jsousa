@@ -127,7 +127,7 @@ float getAngleFromTo(string namee, string player_name)
 						angleC = MAX_ANGLE;
 					}
 				if(checkLimits()){
-						angleC = MAX_ANGLE;
+						angleC = M_PI/60;
 				}
 			}else{
 				double mindist = 1000000;
