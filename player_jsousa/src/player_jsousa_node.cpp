@@ -109,7 +109,7 @@ namespace rwsua2017
 			dist[1] = getDistFromTo(name, "jferreira");
 			dist[2] = getDistFromTo(name, "fsilva");
 
-			int safedist = 1;
+			int safedist = 2;
 			double angleC;
 			if(dist[0] < safedist || dist[1] < safedist || dist[2] < safedist){
 				if(dist[0] < safedist){
