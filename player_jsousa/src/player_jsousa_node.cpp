@@ -60,7 +60,7 @@ namespace rwsua2017
 		sub = n.subscribe("/make_a_play/cheetah", 1000, &MyPlayer::makeAPlayCallback, this);
 		vis_pub = n.advertise<visualization_msgs::Marker>( "/bocas", 0 );
 
-	    	cout<<"Initialised MyPlayer"<<endl;
+	    	ROS_INFO_STREAM("Initialised MyPlayer");
 	    }
 
 float getAngleFromTo(string namee, string player_name)
@@ -98,8 +98,8 @@ float getAngleFromTo(string namee, string player_name)
 
 	   void makeAPlayCallback(const rwsua2017_msgs::MakeAPlay::ConstPtr& msg)
 	   {
-		cout << "I received a MakeAPlay message" << endl;
-		cout << "max_displacement = " << msg->max_displacement << endl;
+		ROS_INFO_STREAM("I received a MakeAPlay message");
+		ROS_INFO_STREAM("max_displacement = " << msg->max_displacement);
 
 		// Definição dos angulos de rotação e valores de translação
 
@@ -264,9 +264,9 @@ int main(int argc, char **argv)
     player.teammates.push_back("fsilva");
     player.teammates.push_back("vsilva");
 
-    cout << "player.name is " << player.name << endl;
-    cout << "team is " << player.get_team_name() << endl;
-    cout << "teammates" << endl;
+    ROS_INFO_STREAM("player.name is " << player.name);
+    ROS_INFO_STREAM("team is " << player.get_team_name());
+    ROS_INFO_STREAM("teammates");
 
 
     ros::spin();
