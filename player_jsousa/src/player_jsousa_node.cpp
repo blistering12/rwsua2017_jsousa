@@ -109,7 +109,7 @@ namespace rwsua2017
 		t_mov.setOrigin( Vector3(displacement,0.0, 0.0) );
 		Transform t = getPose() * t_mov;
 		br.sendTransform(StampedTransform(t, Time::now(), "map", name));
-		t1=t;
+
 		
 	   }
 
