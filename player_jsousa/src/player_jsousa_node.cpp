@@ -100,9 +100,16 @@ namespace rwsua2017
 		// Definição dos angulos de rotação e valores de translação
 
 		float turn_angle=getAngleTo("brocha");
-		if (turn_angle> MAX_ANGLE){turn_angle=MAX_ANGLE;}
-		else if (turn_angle< -MAX_ANGLE){turn_angle=-MAX_ANGLE;}
 		float displacement=msg->max_displacement;
+		move(displacement,turn_angle,MAX_ANGLE);
+	   }
+
+	void move(float displacement, float turn_angle, float max_turn_angle)
+	{
+
+		if (turn_angle> max_turn_angle){turn_angle=max_turn_angle;}
+		else if (turn_angle< -max_turn_angle){turn_angle=-max_turn_angle;}
+
 
 
 		Transform t_mov;
@@ -112,10 +119,8 @@ namespace rwsua2017
 		t_mov.setRotation(q);
 		t_mov.setOrigin( Vector3(displacement,0.0, 0.0) );
 		Transform t = getPose() * t_mov;
-		br.sendTransform(StampedTransform(t, Time::now(), "map", name));
-
-		
-	   }
+		br.sendTransform(StampedTransform(t, Time::now(), "map", name));	
+	}
 
 	    vector<string> teammates; // std::vector<boost::shared_ptr<Player>> teammates;
 	};
