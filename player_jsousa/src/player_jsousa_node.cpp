@@ -118,9 +118,20 @@ float getAngleFromTo(string namee, string player_name)
 					}
 			}
 
+			double mindistP = 100000;
+			int idxP = 0;
+			for(int i = 0; i< msg->red_alive.size();i++){
+				dist[i] = getDistFromTo(name, msg->red_alive[i]);
+				if(dist[i] < mindistP){
+							mindistP = dist[i];
+							idxP = i;
+					}
+			}
+			bool keepHunt = false;
+			if(mindistP < mindistH) keepHunt = true;
 			int safedist = 2;
 			double angleC;
-			if(mindistH < safedist){
+			if(mindistH < safedist && !keepHunt ){
 					if(msg->green_alive.size() > 0){
 						angleC = -getAngleFromTo(name,msg->green_alive[idxH]);
 					}else{
@@ -236,7 +247,7 @@ bool checkLimits(){
 		double x = transform.getOrigin().x();
     double y = transform.getOrigin().y();
 
-		double safedist = 1.5;
+		double safedist = 1;
 
 		if(abs(x) > 5-safedist  ||  abs(y) > 5-safedist){
 				return true;
