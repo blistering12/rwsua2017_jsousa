@@ -101,7 +101,7 @@ namespace rwsua2017
 
 		float turn_angle=getAngleTo("brocha");
 		if (turn_angle> MAX_ANGLE){turn_angle=MAX_ANGLE;}
-		if (turn_angle< -MAX_ANGLE){turn_angle=-MAX_ANGLE;}
+		else if (turn_angle< -MAX_ANGLE){turn_angle=-MAX_ANGLE;}
 		float displacement=msg->max_displacement;
 
 
