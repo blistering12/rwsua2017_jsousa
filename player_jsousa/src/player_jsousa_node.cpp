@@ -60,11 +60,13 @@ namespace rwsua2017
 	    	cout<<"Initialised MyPlayer"<<endl;
 	    }
 
-	   float getAngleTo(string player_name)
+	   float getAngleTo(string player_name,float time_to_wait = 0.1)
 	   {
-		       tf::StampedTransform trans;
+		tf::StampedTransform trans;
+		ros::Time now = Time(0); //get the latest transform received
 		try{
-			listener.lookupTransform(name, player_name,ros::Time(0), trans);
+			listener.waitForTransform(name,player_name,now,Duration(time_to_wait));
+			listener.lookupTransform(name, player_name,now, trans);
 		}
 		catch (tf::TransformException &ex) {
 		ROS_ERROR("%s",ex.what());
@@ -75,11 +77,13 @@ namespace rwsua2017
 		double angle = atan2(y,x);
 	   }
 
-	tf::StampedTransform getPose(void)
+	tf::StampedTransform getPose(float time_to_wait=0.1)
 	{
 		tf::StampedTransform trans;
+	        ros::Time now = Time(0); //get the latest transform received
 		try{
-			listener.lookupTransform("map",name,ros::Time(0), trans);
+			listener.waitForTransform("map",name,now,Duration(time_to_wait));
+			listener.lookupTransform("map",name,now, trans);
 		}
 		catch (tf::TransformException &ex) {
 			ROS_ERROR("%s",ex.what());
@@ -95,7 +99,7 @@ namespace rwsua2017
 
 		// Definição dos angulos de rotação e valores de translação
 
-		float turn_angle=getAngleTo("rmartins");
+		float turn_angle=getAngleTo("brocha");
 		if (turn_angle> MAX_ANGLE){turn_angle=MAX_ANGLE;}
 		if (turn_angle< -MAX_ANGLE){turn_angle=-MAX_ANGLE;}
 		float displacement=msg->max_displacement;
