@@ -63,13 +63,13 @@ namespace rwsua2017
 	    	cout<<"Initialised MyPlayer"<<endl;
 	    }
 
-	   float getAngleTo(string player_name,float time_to_wait = 0.1)
+float getAngleFromTo(string namee, string player_name)
 	   {
 		tf::StampedTransform trans;
 		ros::Time now = Time(0); //get the latest transform received
 		try{
-			listener.waitForTransform(name,player_name,now,Duration(time_to_wait));
-			listener.lookupTransform(name, player_name,now, trans);
+			listener.waitForTransform(namee,player_name,now,Duration(0.1));
+			listener.lookupTransform(namee, player_name,now, trans);
 		}
 		catch (tf::TransformException &ex) {
 		ROS_ERROR("%s",ex.what());
@@ -78,6 +78,7 @@ namespace rwsua2017
 		float x = trans.getOrigin().x();
 		float y = trans.getOrigin().y();
 		double angle = atan2(y,x);
+		return angle;
 	   }
 
 	tf::StampedTransform getPose(float time_to_wait=0.1)
@@ -107,23 +108,43 @@ namespace rwsua2017
 
 
 			double dist[3];
+			double mindistH = 100000;
+			int idxH = 0;
+			for(int i = 0; i< msg->green_alive.size();i++){
+				dist[i] = getDistFromTo(name, msg->green_alive[i]);
+				if(dist[i] < mindistH){
+							mindistH = dist[i];
+							idxH = i;
+					}
+			}
 
-			dist[0] = getDistFromTo(name, "rmartins");
-			dist[1] = getDistFromTo(name, "jferreira");
-			dist[2] = getDistFromTo(name, "fsilva");
-
-			int safedist = 2;
+			int safedist = 1.4;
 			double angleC;
-			if(dist[0] < safedist || dist[1] < safedist || dist[2] < safedist){
-				if(dist[0] < safedist){
-					angleC = -getAngleTo("rmartins");
-				}else if(dist[1] < safedist){
-					angleC = -getAngleTo("jferreira");
-				}else{
-						angleC = -getAngleTo("fsilva");
+			if(mindistH < safedist){
+					if(msg->green_alive.size() > 0){
+						angleC = -getAngleFromTo(name,msg->green_alive[idxH]);
+					}else{
+						angleC = MAX_ANGLE;
+					}
+				if(checkLimits()){
+						angleC = MAX_ANGLE;
 				}
 			}else{
-				angleC = getAngleTo("brocha");
+				double mindist = 1000000;
+				int idx = 0;
+				for(int i = 0; i< msg->red_alive.size();i++){
+					double dis = getDistFromTo(name, msg->red_alive[i]);
+					if(dis < mindist){
+							mindist = dis;
+							idx = i;
+					}
+				}
+			
+				if(msg->red_alive.size() > 0){
+					angleC = getAngleFromTo(name,msg->red_alive[idx]);
+					}else{
+						angleC = MAX_ANGLE;
+					}
 			}
 
 			move(displacement, angleC, MAX_ANGLE);
@@ -194,7 +215,37 @@ double getDistFromTo(string from, string to){
 	}
 
 	    vector<string> teammates; // std::vector<boost::shared_ptr<Player>> teammates;
-	};
+
+bool checkLimits(){
+
+	tf::StampedTransform transform;
+	ros::Time now = ros::Time(0);
+	float time_to_wait = 0.1;
+	double dist = 0;
+	 try{
+			listener.waitForTransform("/map",name,now, ros::Duration(time_to_wait));
+     listener.lookupTransform("/map", name,
+															now,transform);
+    }
+    catch (tf::TransformException ex){
+      ROS_ERROR("%s",ex.what());
+      //ros::Duration(1.0).sleep();
+    }
+
+
+		double x = transform.getOrigin().x();
+    double y = transform.getOrigin().y();
+
+		double safedist = 1.5;
+
+		if(abs(x) > 5-safedist  ||  abs(y) > 5-safedist){
+				return true;
+		}
+		return false;
+
+}	
+
+};
 }
 
 
